@@ -4,5 +4,20 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scene Launcher/Scenes/Main.unity
+    guid: 8a3c2dad20d2edd43b11b52be8c903c8
+  - enabled: 1
+    path: Assets/Glove/Scenes/Gravity-Tube.unity
+    guid: a0193c3bba6b42f49a4d2d223962b65a
+  - enabled: 1
+    path: Assets/Glove/Scenes/Gravity-Sphere.unity
+    guid: b5235907023c4aa48a6934f690e652ba
+  - enabled: 1
+    path: Assets/Glove/Scenes/Gravity-In-Tube.unity
+    guid: b5a4cf211db151346b3415348fd70d86
+  - enabled: 1
+    path: Assets/Glove/Scenes/Gravity-In-Sphere.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

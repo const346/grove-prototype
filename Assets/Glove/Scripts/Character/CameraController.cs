@@ -74,7 +74,7 @@ public class CameraController : MonoBehaviour
 
             Debug.DrawRay(transform.position, forward * 3);
             
-            controller.Move(angle);
+            controller.Move(angle + y);
         }
         else
         {
@@ -91,11 +91,7 @@ public class CameraController : MonoBehaviour
     {
         var up = gravityObject.GetUp();
 
-        var fm = transform.position - cam.transform.position;
-        var forward = Vector3.ProjectOnPlane(fm, up).normalized;
-        var x = Quaternion.LookRotation(forward, up);
-
-        cam.transform.rotation = x /** Quaternion.AngleAxis(y, Vector3.up)*/ /** Quaternion.AngleAxis(x, Vector3.right)*/; // ????????
+        cam.transform.rotation = gravityObject.GetRotation() * Quaternion.AngleAxis(y, Vector3.up) * Quaternion.AngleAxis(x, Vector3.right);
         cam.transform.position = transform.position + up * height + cam.transform.rotation * Vector3.forward * -1f * distance;
     }
 
