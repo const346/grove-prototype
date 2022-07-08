@@ -34,7 +34,7 @@ public class TubeGenerator : MonoBehaviour
             {
                 var segment = Instantiate(segmentTemlate, transform);
 
-                segment.transform.rotation = Quaternion.Euler(ix, 0, 0);
+                segment.transform.rotation = transform.rotation * Quaternion.Euler(ix, 0, 0);
                 segment.transform.position = segment.transform.right * h + segment.transform.forward * radius;
 
                 foreach (var gen in generators)
