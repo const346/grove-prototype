@@ -15,39 +15,53 @@ public class Character : MonoBehaviour
     [SerializeField]
     private float offset;
 
-    private GravityTarget gravityTarget;
-    private Rigidbody body;
+    public Quaternion LookRotation => moveRotation * localLookRotation;
+    public GravityTarget GravityTarget => gravityTarget;
 
-    private float look;
-    private bool move; 
+    private Rigidbody body;
+    private GravityTarget gravityTarget;
+    private Vector3 localMoveDirection;
+    private Quaternion localLookRotation;
+    private Quaternion moveRotation;
+    private float walk;
     private bool jump;
     private bool attack;
-
-    private float walk;
 
     private void Awake()
     {
         gravityTarget = GetComponent<GravityTarget>();
         body = GetComponent<Rigidbody>();
+
+        localLookRotation = Quaternion.identity;
+        moveRotation = Quaternion.identity;
     }
 
     private void Update()
     {
-        var up = gravityTarget.GetUp();
-
-        view.transform.rotation = gravityTarget.GetRotation() * Quaternion.AngleAxis(look, Vector3.up);
-        view.transform.position = transform.position + up * offset;
-
-        walk = Mathf.Lerp(walk, move ? 1f : 0f, 0.2f);
+        view.transform.rotation = moveRotation;
+        view.transform.position = transform.position + gravityTarget.GetUp() * offset;
+        
+        walk = Mathf.Lerp(walk, localMoveDirection != Vector3.zero ? 1f : 0f, 0.2f);
         animator.SetFloat("walk", walk);
 
+
+
+        var up = GravityTarget.GetUp();
+
+        var lookV = moveRotation * localLookRotation * Vector3.forward;
+        var forward = Vector3.ProjectOnPlane(lookV, up);
+        Debug.DrawRay(transform.position, forward);
+
+        moveRotation = Quaternion.LookRotation(forward, up);
+
+        localLookRotation = Quaternion.identity;
     }
 
     private void FixedUpdate()
     {
-        if (move)
+        if (localMoveDirection != Vector3.zero)
         {
-            body.AddTorque(view.transform.right * 400);
+            body.AddTorque(moveRotation * Vector3.right * 400);
         }
         else
         {
@@ -60,7 +74,6 @@ public class Character : MonoBehaviour
 
             var up = gravityTarget.GetUp();
             body.AddForce(up.normalized * 300);
-
             animator.SetTrigger("jump");
         }
 
@@ -71,29 +84,14 @@ public class Character : MonoBehaviour
         }
     }
 
-    public void Move(float angle, Vector3 forward)
+    public void Move(Vector3 localMove)
     {
-        var up = gravityTarget.GetUp();
-        var right = Vector3.Cross(up, forward);
-
-        gravityTarget.SetAxis(right);
-
-        look = Mathf.LerpAngle(look, angle, 0.1f);
-        move = true;
+        localMoveDirection = localMove;
     }
 
-    public void Move(float angle)
+    public void Look(float deltaX, float deltaY)
     {
-        //gravityTarget.SetAxis(axis);
-
-        look = Mathf.LerpAngle(look, angle, 0.1f);
-        move = true;
-    }
-
-
-    public void Stand()
-    {
-        move = false;
+        localLookRotation *= Quaternion.AngleAxis(deltaX, Vector3.right) * Quaternion.AngleAxis(deltaY, Vector3.up);
     }
 
     public void Jump()

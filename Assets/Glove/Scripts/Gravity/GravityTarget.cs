@@ -7,7 +7,6 @@ public class GravityTarget : MonoBehaviour
 {
     private Rigidbody body;
     private Gravity gravity;
-    private Vector3 axis;
 
     private void Awake()
     {
@@ -17,7 +16,6 @@ public class GravityTarget : MonoBehaviour
     private void Start()
     {
         gravity = FindObjectOfType<Gravity>();
-        axis = Vector3.right;
     }
 
     private void FixedUpdate()
@@ -34,23 +32,10 @@ public class GravityTarget : MonoBehaviour
         if (gravity)
         {
             var up = GetUp();
-            var forward = GetForward();
-            var right = GetRight();
 
             Gizmos.color = Color.green;
             Gizmos.DrawRay(transform.position, up);
-
-            Gizmos.color = Color.blue;
-            Gizmos.DrawRay(transform.position, forward);
-            
-            Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, right);
         }
-    }
-
-    public void SetAxis(Vector3 axis)
-    {
-        this.axis = axis;
     }
 
     public Vector3 GetGravity()
@@ -61,27 +46,6 @@ public class GravityTarget : MonoBehaviour
     public Vector3 GetUp()
     {
         return gravity.GetUp(transform.position);
-    }
-
-    public Vector3 GetForward()
-    {
-        return gravity.GetForward(transform.position, axis);
-    }
-
-    public Vector3 GetRight()
-    {
-        var up = GetUp();
-        var forward = GetForward();
-
-        return Vector3.Cross(up, forward).normalized;
-    }
-
-    public Quaternion GetRotation()
-    {
-        var up = GetUp();
-        var forward = GetForward();
-
-        return Quaternion.LookRotation(forward, up);
     }
 
     public void ResetVelocity()

@@ -60,14 +60,6 @@ public class Gravity : MonoBehaviour
         return GetGravity(position).normalized * -1f;
     }
 
-    public Vector3 GetForward(Vector3 position, Vector3 axis)
-    {
-        var up = GetUp(position);
-        var forward = Quaternion.AngleAxis(90, axis) * up;
-
-        return forward;
-    }
-
     public bool CheckOutside(GravityTarget gravityTarget)
     {
         var gk = Mathf.Sign(gravity) * -1;
