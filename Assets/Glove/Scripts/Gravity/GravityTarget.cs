@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 public class GravityTarget : MonoBehaviour
@@ -8,13 +9,11 @@ public class GravityTarget : MonoBehaviour
     private Rigidbody body;
     private Gravity gravity;
 
+    public UnityEvent OnSetPosition;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
-    }
-
-    private void Start()
-    {
         gravity = FindObjectOfType<Gravity>();
     }
 
@@ -48,9 +47,17 @@ public class GravityTarget : MonoBehaviour
         return gravity.GetUp(transform.position);
     }
 
-    public void ResetVelocity()
+    public void SetPosition(Vector3 position, Quaternion rotation, bool resetVelocities)
     {
-        body.velocity = Vector3.zero;
-        body.angularVelocity = Vector3.zero;
+        transform.position = position;
+        transform.rotation = rotation;
+
+        if (resetVelocities)
+        {
+            body.velocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
+        }
+
+        OnSetPosition?.Invoke();
     }
 }

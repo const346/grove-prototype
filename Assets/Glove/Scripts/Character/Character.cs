@@ -36,6 +36,18 @@ public class Character : MonoBehaviour
     {
         gravityTarget = GetComponent<GravityTarget>();
         body = GetComponent<Rigidbody>();
+
+        gravityTarget.OnSetPosition.AddListener(OnSetPosition);
+    }
+
+    private void OnSetPosition()
+    {
+        UpdateForwardRotation();
+
+        viewRotation = forwardRotation;
+
+        view.transform.rotation = viewRotation;
+        view.transform.position = transform.position + gravityTarget.GetUp() * offset;
     }
 
     private void Update()

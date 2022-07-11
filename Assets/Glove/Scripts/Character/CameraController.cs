@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
 
     private Camera currentCamera;
     private Character character;
-    private float distance = 3f;
+    private float distance = 5f;
 
     private void Awake()
     {

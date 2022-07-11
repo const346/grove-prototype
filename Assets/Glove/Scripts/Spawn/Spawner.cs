@@ -39,9 +39,7 @@ public class Spawner : MonoBehaviour
         var spawnIndex = Random.Range(0, spawns.Length);
         var spawn = spawns[spawnIndex];
 
-        entity.transform.position = spawn.GetPosition();
-        entity.transform.rotation = spawn.GetRotation();
-        entity.ResetVelocity();
+        entity.SetPosition(spawn.GetPosition(), spawn.GetRotation(), true);
     }
 
     private bool IsSpawn()
