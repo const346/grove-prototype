@@ -43,17 +43,7 @@ public class Character : MonoBehaviour
         walk = Mathf.Lerp(walk, localMoveDirection != Vector3.zero ? 1f : 0f, 0.2f);
         animator.SetFloat("walk", walk);
 
-        var localLookRotation = Quaternion.AngleAxis(lookY, Vector3.up);
-
-        var up = GravityTarget.GetUp();
-        var lookV = forwardRotation * localLookRotation * Vector3.forward;
-        var forward = Vector3.ProjectOnPlane(lookV, up).normalized;
-
-        Debug.DrawRay(transform.position, forward);
-        
-
-        forwardRotation = Quaternion.LookRotation(forward, up);
-        lookY = 0;
+        UpdateForwardRotation();
 
         if (localMoveDirection != Vector3.zero)
         {
@@ -65,6 +55,20 @@ public class Character : MonoBehaviour
 
         view.transform.rotation = viewRotation;
         view.transform.position = transform.position + gravityTarget.GetUp() * offset;
+    }
+
+    private void UpdateForwardRotation()
+    {
+        var localLookRotation = Quaternion.AngleAxis(lookY, Vector3.up);
+
+        var up = GravityTarget.GetUp();
+        var lookV = forwardRotation * localLookRotation * Vector3.forward;
+        var forward = Vector3.ProjectOnPlane(lookV, up).normalized;
+
+        Debug.DrawRay(transform.position, forward);
+
+        forwardRotation = Quaternion.LookRotation(forward, up);
+        lookY = 0;
     }
 
     private void FixedUpdate()
@@ -105,6 +109,8 @@ public class Character : MonoBehaviour
     {
         lookX += deltaX;
         lookY += deltaY;
+
+        UpdateForwardRotation();
     }
 
     public void Jump()
