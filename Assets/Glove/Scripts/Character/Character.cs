@@ -20,6 +20,8 @@ public class Character : MonoBehaviour
         Quaternion.AngleAxis(lookY, Vector3.up);
 
     public GravityTarget GravityTarget => gravityTarget;
+    public bool IsGround { get; private set; }
+    public bool IsBarrier { get; private set; }
 
     private Rigidbody body;
     private GravityTarget gravityTarget;
@@ -100,9 +102,12 @@ public class Character : MonoBehaviour
         {
             jump = false;
 
-            var upX = gravityTarget.GetUp();
-            body.AddForce(upX.normalized * 300);
-            animator.SetTrigger("jump");
+            if (IsGround)
+            {
+                var upX = gravityTarget.GetUp();
+                body.AddForce(upX.normalized * 300);
+                animator.SetTrigger("jump");
+            }
         }
 
         if (attack)
@@ -110,6 +115,11 @@ public class Character : MonoBehaviour
             attack = false;
             animator.SetTrigger("attack");
         }
+
+        //animator.SetBool("IsGround", IsGround);
+
+        IsBarrier = false;
+        IsGround = false;
     }
 
     public void Move(Vector3 localMove)
@@ -133,5 +143,22 @@ public class Character : MonoBehaviour
     public void Attack()
     {
         attack = true;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        var up = GravityTarget.GetUp();
+        var normal = collision.contacts[0].normal;
+        var angle = Vector3.Angle(normal, up);
+
+        if (angle < 45)
+        {
+            IsGround = true;
+        }
+
+        if (angle > 45 && angle < 45 + 90)
+        {
+            IsBarrier = true;
+        }
     }
 }

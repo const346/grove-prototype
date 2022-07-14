@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Character))]
 public class BotController : MonoBehaviour
 {
-    private GravityTarget gravityObject;
-    private Character controller;
-    private bool actionBreak;
-
+    private Character character;
+    
     private void Awake()
     {
-        controller = GetComponent<Character>();
-        gravityObject = GetComponent<GravityTarget>();
+        character = GetComponent<Character>();
     }
 
     private void OnEnable()
@@ -27,7 +25,7 @@ public class BotController : MonoBehaviour
             var delay = Random.Range(0, 3);
             yield return new WaitForSeconds(delay);
 
-            controller.Move(Vector3.zero);
+            character.Move(Vector3.zero);
 
             if (Random.Range(0, 2) == 0)
             {
@@ -41,26 +39,17 @@ public class BotController : MonoBehaviour
     {
         var count = Random.Range(0, 3100);
 
-        controller.Look(0, angle);
+        character.Look(0, angle);
 
         for (var i = 0; i < count; i++)
         {
-            if (actionBreak)
+            if (character.IsBarrier)
             {
-                actionBreak = false;
                 yield break;
             }
 
-            controller.Move(Vector3.forward);
+            character.Move(Vector3.forward);
             yield return new WaitForFixedUpdate();
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (Vector3.Angle(collision.contacts[0].normal, gravityObject.GetUp()) > 45)
-        {
-            actionBreak = true;
         }
     }
 }
