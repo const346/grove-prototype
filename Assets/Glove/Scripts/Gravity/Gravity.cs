@@ -9,13 +9,19 @@ public class Gravity : MonoBehaviour
     {
         Sphere,
         Tube,
+        Tor,
         Default
     }
 
     [SerializeField] private float gravity = -9.8f;
     [SerializeField] private GravityType gravityType;
-    [SerializeField] private float outside = 0;
 
+    [Header("Specific")]
+    [SerializeField] private float torRadius = 8;
+
+    [Header("Detect Ouside")]
+    [SerializeField] private bool checkOutside = true;
+    [SerializeField] private float outside = 0;
     public UnityEvent<GravityTarget> OnOuside;
 
     private void Start()
@@ -35,6 +41,13 @@ public class Gravity : MonoBehaviour
             var m = Vector3.ProjectOnPlane(k, transform.right);
             return m.magnitude;
         }
+        else if (gravityType == GravityType.Tor)
+        {
+            var n = Vector3.ProjectOnPlane(k, transform.up);
+            var m = transform.position + (n - transform.position).normalized * torRadius;
+            
+            return Vector3.Distance(position, m);
+        }
 
         return 0;
     }
@@ -51,6 +64,13 @@ public class Gravity : MonoBehaviour
             var m = Vector3.ProjectOnPlane(k, transform.right);
             return m.normalized * gravity;
         }
+        else if (gravityType == GravityType.Tor)
+        {
+            var n = Vector3.ProjectOnPlane(k, transform.up);
+            var m = transform.position + (n - transform.position).normalized * torRadius;
+            var l = position - m;
+            return l.normalized * gravity;
+        }
 
         return transform.up * gravity;
     }
@@ -62,11 +82,14 @@ public class Gravity : MonoBehaviour
 
     public bool CheckOutside(GravityTarget gravityTarget)
     {
-        var gk = Mathf.Sign(gravity) * -1;
-        if (GetDistance(gravityTarget.transform.position) * gk < outside * gk)
+        if (checkOutside)
         {
-            OnOuside?.Invoke(gravityTarget);
-            return true;
+            var gk = Mathf.Sign(gravity) * -1;
+            if (GetDistance(gravityTarget.transform.position) * gk < outside * gk)
+            {
+                OnOuside?.Invoke(gravityTarget);
+                return true;
+            }
         }
 
         return false;

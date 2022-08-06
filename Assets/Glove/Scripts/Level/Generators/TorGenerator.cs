@@ -71,7 +71,7 @@ public class TorGenerator : MonoBehaviour
         return false;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         var center = transform.position;
         var deltaM = 360f / segmentTCount; 
